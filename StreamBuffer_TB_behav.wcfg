@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="StreamBuffer_TB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="StreamBuffer_TB" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0 ps"></ZoomStartTime>
+      <ZoomEndTime time="76 ps"></ZoomEndTime>
+      <Cursor1Time time="0 ps"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="197"></NameColumnWidth>
+      <ValueColumnWidth column_width="120"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/StreamBuffer_TB/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/nrst" type="logic">
+      <obj_property name="ElementShortName">nrst</obj_property>
+      <obj_property name="ObjectShortName">nrst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/s_tready" type="logic">
+      <obj_property name="ElementShortName">s_tready</obj_property>
+      <obj_property name="ObjectShortName">s_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/m_tvalid" type="logic">
+      <obj_property name="ElementShortName">m_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/s_tvalid" type="logic">
+      <obj_property name="ElementShortName">s_tvalid</obj_property>
+      <obj_property name="ObjectShortName">s_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/m_tready" type="logic">
+      <obj_property name="ElementShortName">m_tready</obj_property>
+      <obj_property name="ObjectShortName">m_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/s_tdata" type="array">
+      <obj_property name="ElementShortName">s_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/m_tdata" type="array">
+      <obj_property name="ElementShortName">m_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/DUT/read_pointer" type="array">
+      <obj_property name="ElementShortName">read_pointer[9:0]</obj_property>
+      <obj_property name="ObjectShortName">read_pointer[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/StreamBuffer_TB/DUT/write_pointer" type="array">
+      <obj_property name="ElementShortName">write_pointer[9:0]</obj_property>
+      <obj_property name="ObjectShortName">write_pointer[9:0]</obj_property>
+   </wvobject>
+</wave_config>

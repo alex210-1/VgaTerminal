@@ -1,6 +1,0 @@
-# compile vhdl design source files
-vhdl xil_defaultlib  \
-"../../../../VgaTerminal.srcs/sim_1/new/TestEntity.vhd" \
-
-# Do not sort compile order
-nosort
