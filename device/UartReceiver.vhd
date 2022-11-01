@@ -77,7 +77,7 @@ begin
                 end case;
             end if;
 
-            cts <= m_tready;
+            cts <= not m_tready;
 
             -- stream handshake
             if m_tready = '1' and m_tvalid = '1' then

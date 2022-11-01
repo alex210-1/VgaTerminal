@@ -9,6 +9,7 @@
 --!
 --! Alexander Horstkoetter 30.10.2022
 --! Simulated successfully 30.10.2022
+--! change two pointers to one pointer + size
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -24,7 +25,8 @@ entity StreamBuffer is
         s_tdata   : in std_logic_vector(7 downto 0);
         m_tvalid  : out std_logic; -- data available to be sent by buffer
         m_tready  : in std_logic;  -- slave ready to receive data
-        m_tdata   : out std_logic_vector(7 downto 0));
+        m_tdata   : out std_logic_vector(7 downto 0);
+        size      : out unsigned(BUFFER_BITS - 1 downto 0)); -- current fill level
 end StreamBuffer;
 
 architecture Behavioral of StreamBuffer is
@@ -32,34 +34,33 @@ architecture Behavioral of StreamBuffer is
 
     signal data_buffer                 : BufferArray;
     signal read_pointer, write_pointer : unsigned(BUFFER_BITS - 1 downto 0);
-    signal s_tready_int, m_tvalid_int  : std_logic;
 begin
-    s_tready <= s_tready_int;
-    m_tvalid <= m_tvalid_int;
 
-    -- ready to receive when buffer not full. buffer full if write_pointer = read_pointer - 1
-    s_tready_int <= '0' when write_pointer + 1 = read_pointer or nrst = '0' else '1';
+    -- ready to receive when buffer not full
+    s_tready <= '0' when (and size = '1') or nrst = '0' else '1';
+    -- ready to send when buffer not empty
+    m_tvalid <= '0' when (or size = '0') or nrst = '0' else '1';
 
-    -- ready to send when buffer not empty. buffer empty if read_pointer = write_pointer
-    m_tvalid_int <= '0' when write_pointer = read_pointer or nrst = '0' else '1';
+    write_pointer <= read_pointer + size;
 
-    rst_logic : process (clk) begin
+    process (clk) begin
         if rising_edge(clk) then
             if nrst = '0' then
-                read_pointer  <= to_unsigned(0, BUFFER_BITS);
-                write_pointer <= to_unsigned(0, BUFFER_BITS);
+                read_pointer <= to_unsigned(0, BUFFER_BITS);
+                size         <= to_unsigned(0, BUFFER_BITS);
             else
 
-                -- slave handshake
-                if s_tready_int = '1' and s_tvalid = '1' then
+                -- slave handshake -> write to buffer
+                if s_tready = '1' and s_tvalid = '1' then
                     data_buffer(to_integer(write_pointer)) <= s_tdata;
-                    write_pointer                          <= write_pointer + 1;
+                    size                                   <= size + 1;
                 end if;
 
-                -- master handshake
-                if m_tready = '1' and m_tvalid_int = '1' then
+                -- master handshake - read from buffer
+                if m_tready = '1' and m_tvalid = '1' then
                     m_tdata      <= data_buffer(to_integer(read_pointer));
                     read_pointer <= read_pointer + 1;
+                    size         <= size - 1;
                 end if;
 
             end if;

@@ -19,7 +19,7 @@ entity UartTransmitter is
     port (
         clk, nrst : in std_logic;
         -- UART
-        rts     : in std_logic; --! request to send. other device is ready to receive
+        rts     : in std_logic; --! request to send. other device is ready to receive. low active!
         rxd_out : out std_logic;
         -- AXI4-stream slave
         s_tvalid : in std_logic;  --! data available from master
@@ -67,7 +67,7 @@ begin
                     case to_integer(transmit_state) is
                         when 0 =>
                             -- ready to receive, send stop bit
-                            if rts = '1' and s_tvalid = '1' then
+                            if rts = '0' and s_tvalid = '1' then
                                 transmit_state <= transmit_state + 1;
                                 rxd_out        <= '0';
                                 s_tready       <= '1';
