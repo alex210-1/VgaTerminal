@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="UartPipeline_TB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="UartPipeline_TB" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="8.500 ns"></ZoomStartTime>
+      <ZoomEndTime time="17.161 ns"></ZoomEndTime>
+      <Cursor1Time time="5.120 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="276"></NameColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="11" />
+   <wvobject fp_name="/UartPipeline_TB/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/nrst" type="logic">
+      <obj_property name="ElementShortName">nrst</obj_property>
+      <obj_property name="ObjectShortName">nrst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/rxtx" type="logic">
+      <obj_property name="ElementShortName">rxtx</obj_property>
+      <obj_property name="ObjectShortName">rxtx</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/rtscts" type="logic">
+      <obj_property name="ElementShortName">rtscts</obj_property>
+      <obj_property name="ObjectShortName">rtscts</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/in_tvalid" type="logic">
+      <obj_property name="ElementShortName">in_tvalid</obj_property>
+      <obj_property name="ObjectShortName">in_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/in_tready" type="logic">
+      <obj_property name="ElementShortName">in_tready</obj_property>
+      <obj_property name="ObjectShortName">in_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/in_tdata" type="array">
+      <obj_property name="ElementShortName">in_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">in_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/out_tvalid" type="logic">
+      <obj_property name="ElementShortName">out_tvalid</obj_property>
+      <obj_property name="ObjectShortName">out_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/out_tready" type="logic">
+      <obj_property name="ElementShortName">out_tready</obj_property>
+      <obj_property name="ObjectShortName">out_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/out_tdata" type="array">
+      <obj_property name="ElementShortName">out_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">out_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartPipeline_TB/store/data_buffer" type="array">
+      <obj_property name="ElementShortName">data_buffer[15:0][7:0]</obj_property>
+      <obj_property name="ObjectShortName">data_buffer[15:0][7:0]</obj_property>
+   </wvobject>
+</wave_config>

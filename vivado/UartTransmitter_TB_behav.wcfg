@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="UartTransmitter_TB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="UartTransmitter_TB" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0 ps"></ZoomStartTime>
+      <ZoomEndTime time="1,271 ps"></ZoomEndTime>
+      <Cursor1Time time="0 ps"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="276"></NameColumnWidth>
+      <ValueColumnWidth column_width="120"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject fp_name="/UartTransmitter_TB/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/nrst" type="logic">
+      <obj_property name="ElementShortName">nrst</obj_property>
+      <obj_property name="ObjectShortName">nrst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/rxd_out" type="logic">
+      <obj_property name="ElementShortName">rxd_out</obj_property>
+      <obj_property name="ObjectShortName">rxd_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/rts" type="logic">
+      <obj_property name="ElementShortName">rts</obj_property>
+      <obj_property name="ObjectShortName">rts</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/s_tvalid" type="logic">
+      <obj_property name="ElementShortName">s_tvalid</obj_property>
+      <obj_property name="ObjectShortName">s_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/s_tready" type="logic">
+      <obj_property name="ElementShortName">s_tready</obj_property>
+      <obj_property name="ObjectShortName">s_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/s_tdata" type="array">
+      <obj_property name="ElementShortName">s_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/message" type="array">
+      <obj_property name="ElementShortName">message[7:0]</obj_property>
+      <obj_property name="ObjectShortName">message[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/DUT/transmit_buffer" type="array">
+      <obj_property name="ElementShortName">transmit_buffer[7:0]</obj_property>
+      <obj_property name="ObjectShortName">transmit_buffer[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/DUT/baud_clk" type="logic">
+      <obj_property name="ElementShortName">baud_clk</obj_property>
+      <obj_property name="ObjectShortName">baud_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/DUT/transmit_flag" type="logic">
+      <obj_property name="ElementShortName">transmit_flag</obj_property>
+      <obj_property name="ObjectShortName">transmit_flag</obj_property>
+   </wvobject>
+   <wvobject fp_name="/UartTransmitter_TB/DUT/transmit_state" type="array">
+      <obj_property name="ElementShortName">transmit_state[3:0]</obj_property>
+      <obj_property name="ObjectShortName">transmit_state[3:0]</obj_property>
+   </wvobject>
+</wave_config>
