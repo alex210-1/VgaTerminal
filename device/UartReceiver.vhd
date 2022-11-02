@@ -79,7 +79,7 @@ begin
 
             cts <= not m_tready;
 
-            -- stream handshake
+            -- axi-stream handshake
             if m_tready = '1' and m_tvalid = '1' then
                 m_tvalid <= '0';
             end if;
