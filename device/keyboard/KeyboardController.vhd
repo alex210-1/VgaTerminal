@@ -4,6 +4,7 @@
 --!
 --! Alexander Horstkötter 03.11.2022
 --! successfully simulated 04.11.2022
+--! fixed caps-lock bug 05.11.2022
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -95,13 +96,17 @@ begin
                 if s_tvalid then
                     case scancode_to_keycode(s_tdata_code) is
                             -- control keys
-                        when KEY_L_SHIFT   => l_shift_pressed    <= not s_tdata_break;
-                        when KEY_R_SHIFT   => l_shift_pressed    <= not s_tdata_break;
-                        when KEY_L_CTRL    => l_ctrl_pressed      <= not s_tdata_break;
-                        when KEY_R_CTRL    => r_ctrl_pressed      <= not s_tdata_break;
-                        when KEY_ALT       => alt_pressed            <= not s_tdata_break;
-                        when KEY_ALT_GR    => alt_gr_pressed      <= not s_tdata_break;
-                        when KEY_CAPS_LOCK => caps_lock_active <= not caps_lock_active;
+                        when KEY_L_SHIFT   => l_shift_pressed <= not s_tdata_break;
+                        when KEY_R_SHIFT   => l_shift_pressed <= not s_tdata_break;
+                        when KEY_L_CTRL    => l_ctrl_pressed   <= not s_tdata_break;
+                        when KEY_R_CTRL    => r_ctrl_pressed   <= not s_tdata_break;
+                        when KEY_ALT       => alt_pressed         <= not s_tdata_break;
+                        when KEY_ALT_GR    => alt_gr_pressed   <= not s_tdata_break;
+                        when KEY_CAPS_LOCK =>
+                            if not s_tdata_break then
+                                caps_lock_active <= not caps_lock_active;
+                            end if;
+
                             -- first row TODO
                         when KEY_ESC    => send_cmd(CMD_ESCAPE);
                         when KEY_DELETE => send_cmd(CMD_DELETE);
