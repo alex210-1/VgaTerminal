@@ -6,7 +6,7 @@ entity StreamBuffer_TB is
 end StreamBuffer_TB;
 
 architecture Behavioral of StreamBuffer_TB is
-    component StreamBuffer
+    component StreamBuffer is
         generic (
             BUFFER_BITS : positive := 10);
         port (

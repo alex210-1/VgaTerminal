@@ -10,7 +10,7 @@ entity UartPipeline_TB is
 end entity;
 
 architecture test of UartPipeline_TB is
-    component UartTransmitter
+    component UartTransmitter is
         generic (
             BAUD     : real := 9600.0;
             CLK_FREQ : real := 100000000.0);
@@ -25,7 +25,7 @@ architecture test of UartPipeline_TB is
             s_tdata  : in std_logic_vector(7 downto 0));
     end component;
 
-    component UartReceiver
+    component UartReceiver is
         generic (
             BAUD : real := 9600.0);
         port (
@@ -39,7 +39,7 @@ architecture test of UartPipeline_TB is
             m_tdata  : out std_logic_vector(7 downto 0));
     end component;
 
-    component StreamBuffer
+    component StreamBuffer is
         generic (
             BUFFER_BITS : positive := 10);
         port (

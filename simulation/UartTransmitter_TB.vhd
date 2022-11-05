@@ -6,7 +6,7 @@ entity UartTransmitter_TB is
 end entity;
 
 architecture test of UartTransmitter_TB is
-    component UartTransmitter
+    component UartTransmitter is
         generic (
             BAUD     : real := 9600.0;
             CLK_FREQ : real := 100000000.0);

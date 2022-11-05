@@ -6,7 +6,7 @@ entity UartReceiver_TB is
 end entity;
 
 architecture test of UartReceiver_TB is
-    component UartReceiver
+    component UartReceiver is
         generic (
             BAUD : real := 9600.0);
         port (

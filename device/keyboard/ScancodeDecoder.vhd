@@ -11,10 +11,8 @@ use ieee.numeric_std.all;
 entity ScancodeDecoder is
     port (
         clk, nrst     : in std_logic;
-        s_tready      : out std_logic;
         s_tvalid      : in std_logic;
         s_tdata       : in std_logic_vector(7 downto 0);
-        m_tready      : in std_logic;
         m_tvalid      : out std_logic;
         m_tdata_code  : out std_logic_vector(15 downto 0);
         m_tdata_break : out std_logic);
@@ -29,7 +27,6 @@ architecture behavioral of ScancodeDecoder is
         TRANSMIT);      -- scancode complete. waiting for downstream handshake
     signal decode_state : DecodeState;
 begin
-    s_tready <= '0' when decode_state = TRANSMIT or nrst = '0' else '1';
     m_tvalid <= '1' when decode_state = TRANSMIT and nrst = '1' else '0';
 
     process (clk) begin
@@ -39,8 +36,8 @@ begin
                 m_tdata_code  <= (others => '0');
                 m_tdata_break <= '0';
             else
-                -- slave stream handshake
-                if s_tvalid and s_tready then
+                -- push stream handshake
+                if s_tvalid then
                     case decode_state is
                         when IDLE =>
                             case s_tdata is
@@ -74,7 +71,7 @@ begin
                 end if;
 
                 -- master stream handshake
-                if decode_state = TRANSMIT and m_tready = '1' then
+                if decode_state = TRANSMIT then
                     decode_state  <= IDLE;
                     m_tdata_break <= '0';
                 end if;

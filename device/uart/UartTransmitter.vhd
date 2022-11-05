@@ -25,7 +25,7 @@ entity UartTransmitter is
         s_tvalid : in std_logic;  --! data available from master
         s_tready : out std_logic; --! data ready to be received
         s_tdata  : in std_logic_vector(7 downto 0));
-end UartTransmitter;
+end entity;
 
 architecture Behavioral of UartTransmitter is
     component ClockDivN

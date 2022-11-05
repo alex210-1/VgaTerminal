@@ -9,13 +9,11 @@ entity ScancodeDecoder_TB is
 end entity;
 
 architecture behavioral of ScancodeDecoder_TB is
-    component ScancodeDecoder
+    component ScancodeDecoder is
         port (
             clk, nrst     : in std_logic;
-            s_tready      : out std_logic;
             s_tvalid      : in std_logic;
             s_tdata       : in std_logic_vector(7 downto 0);
-            m_tready      : in std_logic;
             m_tvalid      : out std_logic;
             m_tdata_code  : out std_logic_vector(15 downto 0);
             m_tdata_break : out std_logic);
@@ -29,22 +27,19 @@ architecture behavioral of ScancodeDecoder_TB is
         x"E0", x"F0", x"70" -- break INSERT
     );
 
-    signal clk, nrst            : std_logic := '0';
-    signal in_tready, in_tvalid : std_logic;
-    signal in_tdata             : std_logic_vector(7 downto 0);
-    signal out_tready           : std_logic := '1';
-    signal out_tvalid           : std_logic;
-    signal out_tdata_break      : std_logic;
-    signal out_tdata_code       : std_logic_vector(15 downto 0);
+    signal clk, nrst       : std_logic := '0';
+    signal in_tvalid       : std_logic;
+    signal in_tdata        : std_logic_vector(7 downto 0);
+    signal out_tvalid      : std_logic;
+    signal out_tdata_break : std_logic;
+    signal out_tdata_code  : std_logic_vector(15 downto 0);
 begin
     DUT : ScancodeDecoder
     port map(
         clk           => clk,
         nrst          => nrst,
-        s_tready      => in_tready,
         s_tvalid      => in_tvalid,
         s_tdata       => in_tdata,
-        m_tready      => out_tready,
         m_tvalid      => out_tvalid,
         m_tdata_break => out_tdata_break,
         m_tdata_code  => out_tdata_code);
@@ -59,16 +54,13 @@ begin
         nrst <= '1';
 
         for i in scan_codes'range loop
-            if in_tready = '0' then
-                wait until in_tready = '1';
-            end if;
 
             in_tvalid <= '1';
             in_tdata  <= scan_codes(i);
 
-            wait for 10 ps;
+            wait for 20 ps;
             in_tvalid <= '0';
-            wait for 10 ps;
+            wait for 20 ps;
         end loop;
     end process;
 end architecture;

@@ -6,7 +6,7 @@ entity Ps2Receiver_TB is
 end entity;
 
 architecture test of Ps2Receiver_TB is
-    component Ps2Receiver
+    component Ps2Receiver is
         port (
             clk, nrst         : in std_logic;
             ps2_clk, ps2_data : in std_logic;
