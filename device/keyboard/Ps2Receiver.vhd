@@ -1,7 +1,8 @@
 --! Basic PS/2 receiver. outpust raw received data via push stream
 --! Alexander Horstkötter 02.11.2022
 --! simulated successfully 02.11.2022
---! fixed edge detection bug 04.11.2022
+--! fixed edge detection bug 04.11.2022+#
+
 --!
 --! PS/2 unidirectional receive process: https://de.wikipedia.org/wiki/PS/2-Schnittstelle
 --! pulling low of signals not currently implemented
