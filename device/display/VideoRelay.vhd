@@ -7,25 +7,37 @@ use ieee.numeric_std.all;
 
 entity VideoRelay is
     port (
-        CLK100MHZ, CPU_RESETN : in std_logic;
-        VGA_R, VGA_G, VGA_B   : out std_logic_vector(3 downto 0);
-        VGA_VS, VGA_HS        : out std_logic; --! low active
-        UART_TXD_IN           : in std_logic;
-        UART_CTS              : out std_logic);
+        CLK100MHZ           : in std_logic;
+        CPU_RESETN          : in std_logic;
+        VGA_R, VGA_G, VGA_B : out std_logic_vector(3 downto 0);
+        VGA_VS, VGA_HS      : out std_logic; --! low active
+        UART_TXD_IN         : in std_logic;
+        UART_CTS            : out std_logic);
 end entity;
 
 architecture behavioral of VideoRelay is
-    component TextRenderer is
-        generic (
-            TEXT_W : integer := 40;
-            TEXT_H : integer := 20);
+    component PixelClockGen is
         port (
-            clk, nrst           : in std_logic;
-            s_tvalid            : in std_logic;
-            s_taddr             : in integer range 0 to (TEXT_W * TEXT_H) - 1;
-            s_tdata             : in std_logic_vector(7 downto 0);
-            vga_r, vga_g, vga_b : out std_logic_vector(3 downto 0);
-            vga_vs, vga_hs      : out std_logic); --! low active
+            clk_logic : out std_logic;
+            clk_pixel : out std_logic;
+            locked    : out std_logic;
+            reset     : in std_logic;
+            clk100mhz : in std_logic
+        );
+    end component;
+
+    component TextRenderer1024p is
+        generic (
+            TEXT_W : integer := 80;
+            TEXT_H : integer := 42);
+        port (
+            nrst                 : in std_logic;
+            clk100mhz, clk108mhz : in std_logic;
+            s_tvalid             : in std_logic;
+            s_taddr              : in integer range 0 to (TEXT_W * TEXT_H) - 1;
+            s_tdata              : in std_logic_vector(7 downto 0);
+            vga_r, vga_g, vga_b  : out std_logic_vector(3 downto 0);
+            vga_vs, vga_hs       : out std_logic); --! low active
     end component;
 
     component UartReceiver is
@@ -45,38 +57,50 @@ architecture behavioral of VideoRelay is
     constant TEXT_W : integer := 40;
     constant TEXT_H : integer := 20;
 
+    signal locked               : std_logic;
+    signal clk_logic, clk_pixel : std_logic;
+
     signal ascii_addr  : integer range 0 to (TEXT_W * TEXT_H) - 1;
     signal ascii       : std_logic_vector(7 downto 0);
     signal ascii_valid : std_logic;
 begin
+    clk_gen : PixelClockGen
+    port map(
+        clk_logic => clk_logic,
+        clk_pixel => clk_pixel,
+        locked    => locked,
+        reset     => CPU_RESETN,
+        clk100mhz => CLK100MHZ);
+
     receiver : UartReceiver
     generic map(
-        BAUD => 1000000.0)
+        BAUD => 9600.0)
     port map(
-        clk      => CLK100MHZ,
-        nrst     => CPU_RESETN,
+        nrst     => locked,
+        clk      => clk_logic,
         txd_in   => UART_TXD_IN,
         cts      => UART_CTS,
         m_tvalid => ascii_valid,
         m_tready => '1',
         m_tdata  => ascii);
 
-    renderer : TextRenderer
+    renderer : TextRenderer1024p
     port map(
-        clk      => CLK100MHZ,
-        nrst     => CPU_RESETN,
-        s_tvalid => ascii_valid,
-        s_taddr  => ascii_addr,
-        s_tdata  => ascii,
-        vga_r    => VGA_R,
-        vga_g    => VGA_G,
-        vga_b    => VGA_B,
-        vga_hs   => VGA_HS,
-        vga_vs   => VGA_VS);
+        nrst      => locked,
+        clk100mhz => clk_logic,
+        clk108mhz => clk_pixel,
+        s_tvalid  => ascii_valid,
+        s_taddr   => ascii_addr,
+        s_tdata   => ascii,
+        vga_r     => VGA_R,
+        vga_g     => VGA_G,
+        vga_b     => VGA_B,
+        vga_hs    => VGA_HS,
+        vga_vs    => VGA_VS);
 
-    process (CLK100MHZ) begin
-        if rising_edge(CLK100MHZ) then
-            if CPU_RESETN = '0' then
+    process (clk_logic) begin
+        if rising_edge(clk_logic) then
+            if locked = '0' then
                 ascii_addr <= 0;
             else
                 if ascii_valid = '1' then

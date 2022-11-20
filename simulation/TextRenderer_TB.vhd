@@ -9,12 +9,12 @@ entity TextRenderer_TB is
 end entity;
 
 architecture test of TextRenderer_TB is
-    component TextRenderer is
+    component TextRenderer480p is
         generic (
-            constant TEXT_W : integer := 40;
-            constant TEXT_H : integer := 20);
+            TEXT_W : integer := 40;
+            TEXT_H : integer := 20);
         port (
-            clk, nrst           : in std_logic;
+            clk100mhz, nrst     : in std_logic;
             s_tvalid            : in std_logic;
             s_taddr             : in integer range 0 to (TEXT_W * TEXT_H) - 1;
             s_tdata             : in std_logic_vector(7 downto 0);
@@ -29,18 +29,18 @@ architecture test of TextRenderer_TB is
     signal ascii_addr          : integer range 0 to 799 := 0;
     signal ascii_valid         : std_logic;
 begin
-    DUT : TextRenderer
+    DUT : TextRenderer480p
     port map(
-        clk      => clk,
-        nrst     => nrst,
-        s_tvalid => ascii_valid,
-        s_taddr  => ascii_addr,
-        s_tdata  => ascii,
-        vga_r    => vga_r,
-        vga_g    => vga_g,
-        vga_b    => vga_b,
-        vga_hs   => vga_hs,
-        vga_vs   => vga_vs);
+        clk100mhz => clk,
+        nrst      => nrst,
+        s_tvalid  => ascii_valid,
+        s_taddr   => ascii_addr,
+        s_tdata   => ascii,
+        vga_r     => vga_r,
+        vga_g     => vga_g,
+        vga_b     => vga_b,
+        vga_hs    => vga_hs,
+        vga_vs    => vga_vs);
 
     gen_clk : process begin
         wait for 5 ns;
