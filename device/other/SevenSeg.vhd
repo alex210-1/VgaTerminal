@@ -11,8 +11,8 @@ entity SevenSeg is
         CPU_RESETN                     : in std_logic;
         CA, CB, CC, CD, CE, CF, CG, DP : out std_logic; -- low active
 
-        AN : out std_logic_vector(7 downto 0); -- low active
-        SW : in std_logic_vector(15 downto 0));
+        AN   : out std_logic_vector(7 downto 0); -- low active
+        data : in std_logic_vector(31 downto 0));
 end entity;
 
 architecture behavioral of SevenSeg is
@@ -26,26 +26,21 @@ architecture behavioral of SevenSeg is
     end component;
 
     signal C       : std_logic_vector(6 downto 0); -- "ABCDEFG"
-    signal n_seg   : unsigned(1 downto 0);
     signal seg_in  : std_logic_vector(3 downto 0);
-    signal seg_clk : std_logic;
+    signal n_seg   : unsigned(2 downto 0);
+    signal clk_div : unsigned(15 downto 0);
 begin
-    clk_div : ClockDivN
-    generic map(
-        N => 2 ** 16)
-    port map(
-        clk    => CLK100MHZ,
-        rst    => not CPU_RESETN,
-        output => seg_clk);
 
     process (CLK100MHZ) begin
         if rising_edge(CLK100MHZ) then
             if CPU_RESETN = '0' then
-                n_seg <= "00";
+                n_seg <= "000";
             else
-                if seg_clk = '1' then
+                if clk_div = 0 then
                     n_seg <= n_seg + 1;
                 end if;
+
+                clk_div <= clk_div + 1;
             end if;
         end if;
     end process;
@@ -59,17 +54,25 @@ begin
     CG <= not C(0);
 
     with n_seg select seg_in <=
-        SW(3 downto 0) when "00",
-        SW(7 downto 4) when "01",
-        SW(11 downto 8) when "10",
-        SW(15 downto 12) when "11",
+        data(3 downto 0) when "000",
+        data(7 downto 4) when "001",
+        data(11 downto 8) when "010",
+        data(15 downto 12) when "011",
+        data(19 downto 16) when "100",
+        data(23 downto 20) when "101",
+        data(27 downto 24) when "110",
+        data(31 downto 28) when "111",
         "XXXX" when others;
 
     with n_seg select AN <=
-        not "00000001" when "00",
-        not "00000010" when "01",
-        not "00000100" when "10",
-        not "00001000" when "11",
+        not "00000001" when "000",
+        not "00000010" when "001",
+        not "00000100" when "010",
+        not "00001000" when "011",
+        not "00010000" when "100",
+        not "00100000" when "101",
+        not "01000000" when "110",
+        not "10000000" when "111",
         "XXXXXXXX" when others;
 
     with seg_in select C <=

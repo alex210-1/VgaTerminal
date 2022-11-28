@@ -17,7 +17,6 @@ entity ScancodeDecoder is
         m_tdata_code  : out std_logic_vector(15 downto 0);
         m_tdata_break : out std_logic);
 end entity;
-
 architecture behavioral of ScancodeDecoder is
     type DecodeState is (
         IDLE,           -- ready to receive new scancode

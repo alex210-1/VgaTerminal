@@ -5,6 +5,7 @@
 --! Complete refactor, successfully simulated and synthesized 13.11.2022
 --! partially works on hardware, but still buggy 13.11.2022
 --! optimzided for synthesis 19.11.2022
+--! it works on hardware 20.11.2022
 
 library ieee;
 use ieee.std_logic_1164.all;
