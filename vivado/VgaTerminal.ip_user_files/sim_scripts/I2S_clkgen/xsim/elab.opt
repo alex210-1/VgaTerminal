@@ -1,0 +1,1 @@
+--incr --debug typical --relax --mt auto -L xil_defaultlib -L secureip -L xpm --snapshot I2S_clkgen xil_defaultlib.I2S_clkgen -log elaborate.log
