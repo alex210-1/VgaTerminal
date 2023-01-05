@@ -47,7 +47,6 @@ begin
         end if;
     end process;
 
-    -- why use seperate process for this?
     storage : process (clk, nrst) begin
         if nrst = '0' then
             state <= IDLE;
@@ -56,7 +55,6 @@ begin
         end if;
     end process;
 
-    -- would this make more sense in the storage process due to hazards?
     with state select light <=
         "000000" when IDLE,
         "111111" when WARN,
