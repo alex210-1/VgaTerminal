@@ -42,11 +42,3 @@ begin
         rst <= '0';
     end process;
 end architecture;
-
-configuration cfg of FreqDiv_TB is
-    for behavioral
-        for DUT : FreqDiv
-            use entity work.FreqDiv(exercise);
-        end for;
-    end for;
-end configuration cfg;

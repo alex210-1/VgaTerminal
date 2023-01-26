@@ -66,7 +66,7 @@ begin
         wait for 100 ns;
         send_valid <= '1';
         read_flag  <= '0';
-        addr       <= "1001100";
+        addr       <= "0011110";
         sub_addr   <= "11001100";
         write_data <= "01010101";
 
@@ -81,7 +81,7 @@ begin
         wait for 100 ns;
         send_valid <= '0';
 
-        wait for 280 us;
+        wait for 300 us;
         sio_d <= '0';
         wait for 40 us;
         sio_d <= '1';

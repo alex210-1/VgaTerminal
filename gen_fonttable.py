@@ -9,7 +9,6 @@
 
 import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
 
 char_w = 16
 char_h = 24
@@ -19,7 +18,6 @@ n_cols = 32
 
 in_map = np.array(Image.open("./FontPage.bmp"))
 in_mono = in_map[:, :, 0]  # drop color channels
-# in_mono = in_map
 
 chars = []
 
@@ -29,15 +27,6 @@ for row in range(n_rows):
         y = row * char_h
         char = in_mono[y:(y + char_h), x:(x + char_w)]  # cut out character
         chars.append(char.flatten())  # flatten column major
-        # chars.append(char)
-
-# plt.imshow(chars[5])
-# plt.show()
-# plt.imshow(chars[5 + 32])
-# plt.show()
-# plt.imshow(chars[5 + 64])
-# plt.show()
-
 
 for char in chars:
     out_bytes = bytearray()

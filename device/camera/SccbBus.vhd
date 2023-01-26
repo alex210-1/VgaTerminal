@@ -37,14 +37,14 @@
 --!     {name : 'sio - d', wave : '1|.022.20z33..3z44..4z1|', data : ['b7', 'Address', 'b1', 'b7', 'SubAddr', 'b0', 'b7', 'Data', 'b0']}
 --!   ],
 --!   {},
---!   ["Read",
---!     {name : 'sio - c', wave : 'h|..n...........|'},
---!     {name : 'sio - d', wave : '1|.022.21z33..3z|', data : ['b7', 'Address', 'b1', 'b7', 'SubAddr', 'b0']}
+--!   ["Read-1",
+--!     {name : 'sio - c', wave : 'h|..n...........h|'},
+--!     {name : 'sio - d', wave : '1|.022.20z33..3z1|', data : ['b7', 'Address', 'b1', 'b7', 'SubAddr', 'b0']}
 --!   ],
 --!   {},
---!   ["Response",
---!     {name : 'sio - c', wave : 'n|............h|'},
---!     {name : 'sio - d', wave : 'z|44..4z55..5.1|', data : ['b7', 'Address', 'b0', 'b7', 'Data', 'b0']}
+--!   ["Read-2",
+--!     {name : 'sio - c', wave : 'h|..n...........h|'},
+--!     {name : 'sio - d', wave : '1|.044.41z55..5z1|', data : ['b7', 'Address', 'b1', 'b7', 'Data from Slave', 'b0']}
 --!   ]
 --! ],
 --!   head: {text: 'SCCB write and read cycle. Physical layer'}
@@ -65,7 +65,7 @@ entity SccbBus is
         read_flag  : in std_logic;  --! when high a read operation is performed, else write
         read_valid : out std_logic; --! data is valid until next transmittion start
 
-        addr       : in std_logic_vector(6 downto 0);  --! slave address
+        addr       : in std_logic_vector(6 downto 0);  --! slave address (without LSB)
         sub_addr   : in std_logic_vector(7 downto 0);  --! register address
         write_data : in std_logic_vector(7 downto 0);  --! data to be writen to sub_addr
         read_data  : out std_logic_vector(7 downto 0); --! data read from sub_addr
@@ -78,14 +78,16 @@ architecture behavioral of SccbBus is
     constant CLK_DIV : integer := 1000; --! divide from 100MHz to 100kHz
 
     type state_type is (
-        READY,
-        START,
-        W_ADDR,
-        W_SUBADDR,
-        W_DATA,
-        R_ADDR,
-        R_DATA,
-        STOP
+        READY,     -- idle, able to accept new data
+        START,     -- SCCB bus start condition
+        W_ADDR,    -- write address
+        W_SUBADDR, -- write subaddres
+        W_DATA,    -- (on write) write data
+        R_STOP,    -- (on read) stop 2-phase write
+        R_START,   -- (on read) start 2-phase read
+        R_ADDR,    -- (on read) master sends slave address
+        R_DATA,    -- (on read) slave send data
+        STOP       -- SCCB bus stop condition
     );
 
     signal state : state_type;
@@ -98,7 +100,8 @@ architecture behavioral of SccbBus is
     signal clk_rising  : std_logic;
 
     signal read_flag_buffer : std_logic; --! stores the read_flag to simplify the state machine
-    signal addr_buffer      : std_logic_vector(7 downto 0);
+    signal addr_buffer_w    : std_logic_vector(7 downto 0);
+    signal addr_buffer_r    : std_logic_vector(7 downto 0); --! two buffers because it is shifted out twice
     signal sub_addr_buffer  : std_logic_vector(7 downto 0);
     signal data_buffer      : std_logic_vector(7 downto 0);
 begin
@@ -117,17 +120,21 @@ begin
                         if send_valid = '1' then
                             state <= START;
                             -- store input data
-                            read_flag_buffer        <= read_flag;
-                            addr_buffer(7 downto 1) <= addr;
-                            addr_buffer(0)          <= read_flag;
-                            sub_addr_buffer         <= sub_addr;
-                            data_buffer             <= write_data;
-                            read_valid              <= '0';
+                            read_flag_buffer          <= read_flag;
+                            addr_buffer_w(7 downto 1) <= addr;
+                            addr_buffer_w(0)          <= '0';
+                            addr_buffer_r(7 downto 1) <= addr;
+                            addr_buffer_r(0)          <= '1';
+                            sub_addr_buffer           <= sub_addr;
+                            data_buffer               <= write_data;
+                            read_valid                <= '0';
                         end if;
+
                     when START =>
                         if clk_falling = '1' then
                             state <= W_ADDR;
                         end if;
+
                     when W_ADDR =>
                         if clk_falling = '1' then
                             if current_bit = 8 then
@@ -135,15 +142,16 @@ begin
                                 current_bit <= 0;
                             else
                                 -- shift out address (MSB first)
-                                addr_buffer <= addr_buffer(6 downto 0) & '0';
-                                current_bit <= current_bit + 1;
+                                addr_buffer_w <= addr_buffer_w(6 downto 0) & '0';
+                                current_bit   <= current_bit + 1;
                             end if;
                         end if;
+
                     when W_SUBADDR =>
                         if clk_falling = '1' then
                             if current_bit = 8 then
-                                if read_flag = '1' then
-                                    state <= R_ADDR;
+                                if read_flag_buffer = '1' then
+                                    state <= R_STOP;
                                 else
                                     state <= W_DATA;
                                 end if;
@@ -155,6 +163,7 @@ begin
                                 current_bit     <= current_bit + 1;
                             end if;
                         end if;
+
                     when W_DATA =>
                         if clk_falling = '1' then
                             if current_bit = 8 then
@@ -166,16 +175,29 @@ begin
                                 current_bit <= current_bit + 1;
                             end if;
                         end if;
+
+                    when R_STOP =>
+                        if clk_falling = '1' then
+                            state <= R_START;
+                        end if;
+
+                    when R_START =>
+                        if clk_falling = '1' then
+                            state <= R_ADDR;
+                        end if;
+
                     when R_ADDR =>
                         if clk_falling = '1' then
                             if current_bit = 8 then
                                 state       <= R_DATA;
                                 current_bit <= 0;
                             else
-                                -- read address is currently ignored
-                                current_bit <= current_bit + 1;
+                                -- shift out address (MSB first)
+                                addr_buffer_r <= addr_buffer_r(6 downto 0) & '0';
+                                current_bit   <= current_bit + 1;
                             end if;
                         end if;
+
                     when R_DATA =>
                         if clk_falling = '1' then
                             if current_bit = 8 then
@@ -191,6 +213,7 @@ begin
                             -- sample bus data on rising edge (MSB first)
                             data_buffer <= data_buffer(6 downto 0) & sio_d;
                         end if;
+
                     when STOP =>
                         if clk_falling = '1' then
                             state <= READY;
@@ -217,22 +240,22 @@ begin
                     when READY =>
                         sio_c <= '1';
                         sio_d <= '1';
-                    when START =>
+                    when START | R_START =>
                         sio_c <= '1';
                         sio_d <= '0';
+                    when STOP | R_STOP =>
+                        sio_c <= '1';
+                        sio_d <= '1';
                     when W_ADDR =>
-                        sio_d <= 'Z' when current_bit = 8 else addr_buffer(7);
+                        sio_d <= 'Z' when current_bit = 8 else addr_buffer_w(7);
+                    when R_ADDR =>
+                        sio_d <= 'Z' when current_bit = 8 else addr_buffer_r(7);
                     when W_SUBADDR =>
                         sio_d <= 'Z' when current_bit = 8 else sub_addr_buffer(7);
                     when W_DATA =>
                         sio_d <= 'Z' when current_bit = 8 else data_buffer(7);
-                    when R_ADDR =>
-                        sio_d <= 'Z';
                     when R_DATA =>
                         sio_d <= '1' when current_bit = 8 else 'Z';
-                    when STOP =>
-                        sio_c <= '1';
-                        sio_d <= '1'; -- TODO not sure whether this is valid
                 end case;
             end if;
         end if;

@@ -16,28 +16,28 @@ entity VideoRelay is
 end entity;
 
 architecture behavioral of VideoRelay is
-    component PixelClockGen is
-        port (
-            clk_logic : out std_logic;
-            clk_pixel : out std_logic;
-            locked    : out std_logic;
-            reset     : in std_logic;
-            clk100mhz : in std_logic
-        );
-    end component;
+    -- component PixelClockGen is
+    --     port (
+    --         clk_logic : out std_logic;
+    --         clk_pixel : out std_logic;
+    --         locked    : out std_logic;
+    --         reset     : in std_logic;
+    --         clk100mhz : in std_logic
+    --     );
+    -- end component;
 
-    component TextRenderer1024p is
+    component TextRenderer480p is
         generic (
             TEXT_W : integer := 80;
             TEXT_H : integer := 42);
         port (
-            nrst                 : in std_logic;
-            clk100mhz, clk108mhz : in std_logic;
-            s_tvalid             : in std_logic;
-            s_taddr              : in integer range 0 to (TEXT_W * TEXT_H) - 1;
-            s_tdata              : in std_logic_vector(7 downto 0);
-            vga_r, vga_g, vga_b  : out std_logic_vector(3 downto 0);
-            vga_vs, vga_hs       : out std_logic); --! low active
+            nrst                : in std_logic;
+            clk100mhz           : in std_logic;
+            s_tvalid            : in std_logic;
+            s_taddr             : in integer range 0 to (TEXT_W * TEXT_H) - 1;
+            s_tdata             : in std_logic_vector(7 downto 0);
+            vga_r, vga_g, vga_b : out std_logic_vector(3 downto 0);
+            vga_vs, vga_hs      : out std_logic); --! low active
     end component;
 
     component UartReceiver is
@@ -54,8 +54,8 @@ architecture behavioral of VideoRelay is
             m_tdata  : out std_logic_vector(7 downto 0));
     end component;
 
-    constant TEXT_W : integer := 40;
-    constant TEXT_H : integer := 20;
+    constant TEXT_W : integer := 20;
+    constant TEXT_H : integer := 10;
 
     signal locked               : std_logic;
     signal clk_logic, clk_pixel : std_logic;
@@ -64,13 +64,16 @@ architecture behavioral of VideoRelay is
     signal ascii       : std_logic_vector(7 downto 0);
     signal ascii_valid : std_logic;
 begin
-    clk_gen : PixelClockGen
-    port map(
-        clk_logic => clk_logic,
-        clk_pixel => clk_pixel,
-        locked    => locked,
-        reset     => CPU_RESETN,
-        clk100mhz => CLK100MHZ);
+    -- clk_gen : PixelClockGen
+    -- port map(
+    --     clk_logic => clk_logic,
+    --     clk_pixel => clk_pixel,
+    --     locked    => locked,
+    --     reset     => CPU_RESETN,
+    --     clk100mhz => CLK100MHZ);
+
+    locked    <= CPU_RESETN;
+    clk_logic <= CLK100MHZ;
 
     receiver : UartReceiver
     generic map(
@@ -84,11 +87,10 @@ begin
         m_tready => '1',
         m_tdata  => ascii);
 
-    renderer : TextRenderer1024p
+    renderer : TextRenderer480p
     port map(
         nrst      => locked,
         clk100mhz => clk_logic,
-        clk108mhz => clk_pixel,
         s_tvalid  => ascii_valid,
         s_taddr   => ascii_addr,
         s_tdata   => ascii,
